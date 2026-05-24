@@ -38,12 +38,8 @@
     padding: 0 16px;
     border-bottom: 1px solid var(--border);
     background: var(--surface);
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    flex-shrink: 0;
-    position: relative;
-    z-index: 20;
+    display: flex; align-items: center; justify-content: space-between;
+    flex-shrink: 0; position: relative; z-index: 20;
   }
   .header-tag { font-family: 'DM Mono', monospace; font-size: 11px; color: var(--muted); letter-spacing: 0.08em; }
   .header-title { font-size: 15px; font-weight: 700; letter-spacing: 0.03em; }
@@ -57,8 +53,7 @@
     padding: 4px; border-radius: 6px; transition: color 0.2s;
     -webkit-tap-highlight-color: transparent; position: relative;
   }
-  .settings-btn:hover { color: var(--accent); }
-  .settings-btn.active { color: var(--accent); }
+  .settings-btn:hover, .settings-btn.active { color: var(--accent); }
   .settings-btn svg { width: 18px; height: 18px; }
   .settings-btn .dot {
     width: 6px; height: 6px; border-radius: 50%; background: var(--recording);
@@ -69,15 +64,12 @@
   /* ── Shell ─────────────────────────────────────────────── */
   .shell { height: calc(100vh - var(--header-h)); display: flex; overflow: hidden; position: relative; }
 
-  /* ── PORTRAIT ──────────────────────────────────────────── */
   @media (orientation: portrait) {
     .shell { flex-direction: column; overflow-y: auto; overflow-x: hidden; }
     .col-left, .col-right { width: 100%; overflow: visible; padding: 20px 18px; border: none; }
     .col-left { padding-bottom: 0; }
     .col-right { padding-top: 16px; }
   }
-
-  /* ── LANDSCAPE ─────────────────────────────────────────── */
   @media (orientation: landscape) {
     .col-left {
       width: 42%; min-width: 300px; max-width: 420px;
@@ -86,7 +78,6 @@
     }
     .col-right { flex: 1; height: 100%; overflow-y: auto; overflow-x: hidden; padding: 20px 18px; }
   }
-
   .col-left, .col-right { display: flex; flex-direction: column; gap: 16px; }
 
   /* ── Settings panel ────────────────────────────────────── */
@@ -96,17 +87,15 @@
     background: var(--surface); border-left: 1px solid var(--border);
     z-index: 15; display: flex; flex-direction: column;
     transform: translateX(100%);
-    transition: transform 0.28s cubic-bezier(0.4, 0, 0.2, 1);
+    transition: transform 0.28s cubic-bezier(0.4,0,0.2,1);
     overflow-y: auto;
   }
   .settings-panel.open { transform: translateX(0); }
-
   .settings-scrim {
     position: absolute; inset: 0; background: rgba(0,0,0,0.5);
     z-index: 14; opacity: 0; pointer-events: none; transition: opacity 0.28s ease;
   }
   .settings-scrim.open { opacity: 1; pointer-events: all; }
-
   .settings-header {
     padding: 16px 18px 14px; border-bottom: 1px solid var(--border);
     display: flex; align-items: center; justify-content: space-between; flex-shrink: 0;
@@ -118,13 +107,9 @@
     padding: 2px 6px; border-radius: 4px; transition: color 0.15s;
   }
   .settings-close:hover { color: var(--text); }
-
   .settings-body { padding: 20px 18px; display: flex; flex-direction: column; gap: 22px; flex: 1; }
   .settings-group { display: flex; flex-direction: column; gap: 8px; }
-  .settings-group label {
-    font-family: 'DM Mono', monospace; font-size: 10px; color: var(--muted);
-    letter-spacing: 0.1em; text-transform: uppercase;
-  }
+  .settings-group label { font-family: 'DM Mono', monospace; font-size: 10px; color: var(--muted); letter-spacing: 0.1em; text-transform: uppercase; }
   .settings-group .hint { font-family: 'DM Mono', monospace; font-size: 10px; color: var(--muted); line-height: 1.5; opacity: 0.7; }
   .settings-group input {
     background: var(--surface2); border: 1px solid var(--border); border-radius: 10px;
@@ -133,16 +118,11 @@
   }
   .settings-group input:focus { border-color: var(--accent); }
   .settings-group input::placeholder { color: var(--muted); }
-
   .settings-key-row { display: flex; gap: 8px; align-items: center; }
   .settings-key-row input { flex: 1; }
   .key-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--muted); flex-shrink: 0; transition: background 0.3s; }
   .key-dot.ok { background: var(--accent3); }
-
-  .settings-footer {
-    padding: 16px 18px; border-top: 1px solid var(--border);
-    display: flex; gap: 10px; flex-shrink: 0;
-  }
+  .settings-footer { padding: 16px 18px; border-top: 1px solid var(--border); display: flex; gap: 10px; flex-shrink: 0; }
   .settings-save {
     flex: 1; padding: 12px; border-radius: 10px; border: none;
     background: var(--accent); color: #fff; font-family: 'Syne', sans-serif;
@@ -175,35 +155,45 @@
   }
   .timer { font-family: 'DM Mono', monospace; font-size: 30px; font-weight: 300; color: var(--text); letter-spacing: 0.08em; }
   .timer.recording { color: var(--recording); }
+
   .record-btn {
     width: 76px; height: 76px; border-radius: 50%; border: 3px solid var(--border);
     background: var(--surface2); cursor: pointer; display: flex; align-items: center;
     justify-content: center; transition: all 0.2s; -webkit-tap-highlight-color: transparent;
   }
   .record-btn:hover { border-color: var(--accent); transform: scale(1.05); }
-  .record-btn.recording { border-color: var(--recording); background: rgba(255,71,87,0.1); animation: pulse-ring 1.5s infinite; }
-  /* hide record btn while recording */
   .record-btn.hidden { display: none; }
 
+  .record-icon { width: 28px; height: 28px; border-radius: 50%; background: var(--recording); transition: all 0.2s; }
+
+  @keyframes pulse-ring {
+    0%   { box-shadow: 0 0 0 0 rgba(255,71,87,0.4); }
+    70%  { box-shadow: 0 0 0 18px rgba(255,71,87,0); }
+    100% { box-shadow: 0 0 0 0 rgba(255,71,87,0); }
+  }
+
+  /* Dedicated stop button — clearly separate, no animation conflict */
   .stop-btn {
     display: none;
-    padding: 13px 28px; border-radius: 12px;
+    padding: 13px 32px; border-radius: 12px;
     border: 2px solid var(--recording); background: rgba(255,71,87,0.12);
     color: var(--recording); font-family: 'Syne', sans-serif;
     font-size: 15px; font-weight: 700; cursor: pointer; letter-spacing: 0.04em;
     transition: all 0.15s; -webkit-tap-highlight-color: transparent;
   }
   .stop-btn.visible { display: block; }
-  .stop-btn:hover { background: rgba(255,71,87,0.22); }
-  @keyframes pulse-ring {
-    0%   { box-shadow: 0 0 0 0 rgba(255,71,87,0.4); }
-    70%  { box-shadow: 0 0 0 18px rgba(255,71,87,0); }
-    100% { box-shadow: 0 0 0 0 rgba(255,71,87,0); }
-  }
-  .record-icon { width: 28px; height: 28px; border-radius: 50%; background: var(--recording); transition: all 0.2s; }
-  .record-btn.recording .record-icon { border-radius: 4px; width: 22px; height: 22px; }
+  .stop-btn:hover { background: rgba(255,71,87,0.25); }
+
   .record-status { font-family: 'DM Mono', monospace; font-size: 11px; color: var(--muted); letter-spacing: 0.06em; text-align: center; }
   .record-status.active { color: var(--recording); }
+
+  /* ── Speech error display ──────────────────────────────── */
+  .speech-error {
+    background: rgba(255,71,87,0.08); border: 1px solid rgba(255,71,87,0.3);
+    border-radius: 8px; padding: 8px 12px; font-family: 'DM Mono', monospace;
+    font-size: 11px; color: var(--recording); line-height: 1.5; display: none;
+  }
+  .speech-error.visible { display: block; }
 
   /* ── Notice ────────────────────────────────────────────── */
   .notice {
@@ -227,8 +217,8 @@
   }
   @media (orientation: portrait)  { .transcript-box { min-height: 140px; max-height: 240px; } }
   @media (orientation: landscape) {
-    .transcript-box { flex: 1 1 0; min-height: 0; }
     .transcript-wrapper { display: flex; flex-direction: column; }
+    .transcript-box { flex: 1 1 0; min-height: 0; }
   }
   .transcript-box .interim { color: rgba(108,99,255,0.55); font-style: italic; }
   .transcript-box .final   { color: var(--text); }
@@ -244,8 +234,8 @@
   }
   .transcript-action-btn:hover:not(:disabled) { border-color: var(--accent3); color: var(--accent3); }
   .transcript-action-btn:disabled { opacity: 0.3; cursor: not-allowed; }
-  .transcript-action-btn.load-btn:hover:not(:disabled) { border-color: var(--accent); color: var(--accent); }
-  .transcript-action-btn.copy-transcript-btn:hover:not(:disabled) { border-color: var(--accent2); color: var(--accent2); }
+  .transcript-action-btn.load-btn:hover:not(:disabled)  { border-color: var(--accent);  color: var(--accent);  }
+  .transcript-action-btn.copy-t-btn:hover:not(:disabled) { border-color: var(--accent2); color: var(--accent2); }
   #fileInput { display: none; }
 
   /* ── Inline error ──────────────────────────────────────── */
@@ -298,7 +288,7 @@
     color: var(--text); white-space: pre-wrap; overflow-y: auto; max-height: 360px;
   }
 
-  /* ── Email modal ───────────────────────────────────────── */
+  /* ── Modals ────────────────────────────────────────────── */
   .modal-overlay {
     position: fixed; inset: 0; background: rgba(0,0,0,0.75);
     display: none; align-items: center; justify-content: center; z-index: 100; padding: 20px;
@@ -310,12 +300,13 @@
   }
   .modal h3 { font-size: 16px; font-weight: 700; }
   .modal p { font-family: 'DM Mono', monospace; font-size: 11px; color: var(--muted); line-height: 1.6; }
-  .modal input {
+  .modal input, .modal textarea {
     background: var(--surface2); border: 1px solid var(--border); border-radius: 8px;
     padding: 11px 14px; color: var(--text); font-family: 'DM Mono', monospace;
-    font-size: 13px; outline: none; width: 100%; transition: border-color 0.2s;
+    font-size: 12px; outline: none; width: 100%; transition: border-color 0.2s;
   }
-  .modal input:focus { border-color: var(--accent); }
+  .modal input:focus, .modal textarea:focus { border-color: var(--accent); }
+  .modal textarea { resize: none; height: 180px; line-height: 1.7; }
   .modal-btns { display: flex; gap: 10px; }
   .modal-btns button {
     flex: 1; padding: 11px; border-radius: 8px; border: 1px solid var(--border);
@@ -325,15 +316,6 @@
   .modal-confirm:hover { opacity: 0.9; }
   .modal-cancel { background: transparent; color: var(--muted); }
   .modal-cancel:hover { color: var(--text); border-color: var(--text); }
-
-  /* ── Paste modal ───────────────────────────────────────── */
-  .paste-modal textarea {
-    background: var(--surface2); border: 1px solid var(--border); border-radius: 8px;
-    padding: 11px 14px; color: var(--text); font-family: 'DM Mono', monospace;
-    font-size: 12px; line-height: 1.7; outline: none; width: 100%;
-    resize: none; height: 180px; transition: border-color 0.2s;
-  }
-  .paste-modal textarea:focus { border-color: var(--accent); }
 
   /* ── Toast ─────────────────────────────────────────────── */
   .toast {
@@ -370,7 +352,6 @@
 </header>
 
 <div class="shell">
-
   <div class="settings-scrim" id="settingsScrim" onclick="closeSettings()"></div>
 
   <!-- ══ LEFT COLUMN ══ -->
@@ -384,14 +365,17 @@
 
     <div class="record-area">
       <div class="timer" id="timer">00:00:00</div>
+      <!-- Start button: visible when idle -->
       <button class="record-btn" id="recordBtn" onclick="startRecording()">
         <div class="record-icon"></div>
       </button>
-      <button class="stop-btn" id="stopBtn" onclick="stopRecording()">
-        ■ Stop Recording
-      </button>
+      <!-- Stop button: visible only during recording -->
+      <button class="stop-btn" id="stopBtn" onclick="stopRecording()">■ Stop Recording</button>
       <div class="record-status" id="recordStatus">TAP TO BEGIN RECORDING</div>
     </div>
+
+    <!-- Speech error: persistent, visible when Safari gives us an error code -->
+    <div class="speech-error" id="speechError"></div>
 
     <div class="notice">
       ⚠ Transcription uses your browser's Web Speech API, which sends audio to Google's servers in real time. Internet required. Use Chrome or Safari. Claude cleans up recognition errors on processing.
@@ -409,24 +393,14 @@
       </div>
     </div>
 
-    <!-- Transcript actions: Save · Copy · Load -->
     <div class="transcript-actions">
-      <button class="transcript-action-btn" id="saveTranscriptBtn" onclick="saveTranscript()" disabled title="Download as .txt file">
-        ↓ Save
-      </button>
-      <button class="transcript-action-btn copy-transcript-btn" id="copyTranscriptBtn" onclick="copyTranscript()" disabled title="Copy raw transcript to clipboard">
-        ⎘ Copy
-      </button>
-      <button class="transcript-action-btn load-btn" onclick="document.getElementById('fileInput').click()" title="Load from .txt file">
-        ↑ Load File
-      </button>
-      <button class="transcript-action-btn load-btn" onclick="openPasteModal()" title="Paste transcript text">
-        ✎ Paste
-      </button>
+      <button class="transcript-action-btn" id="saveTranscriptBtn" onclick="saveTranscript()" disabled>↓ Save</button>
+      <button class="transcript-action-btn copy-t-btn" id="copyTranscriptBtn" onclick="copyTranscript()" disabled>⎘ Copy</button>
+      <button class="transcript-action-btn load-btn" onclick="document.getElementById('fileInput').click()">↑ Load File</button>
+      <button class="transcript-action-btn load-btn" onclick="openPasteModal()">✎ Paste</button>
       <input type="file" id="fileInput" accept=".txt" onchange="loadTranscript(event)">
     </div>
 
-    <!-- Inline error -->
     <div class="inline-error" id="inlineError">
       <span id="inlineErrorMsg"></span>
       <button id="inlineErrorAction"></button>
@@ -456,7 +430,6 @@
       <button class="settings-close" onclick="closeSettings()">✕</button>
     </div>
     <div class="settings-body">
-
       <div class="settings-group">
         <label>Anthropic API Key</label>
         <div class="settings-key-row">
@@ -465,19 +438,16 @@
         </div>
         <span class="hint">Saved locally in your browser. Never sent anywhere except api.anthropic.com.</span>
       </div>
-
       <div class="settings-group">
         <label>Default Conference Name</label>
         <input type="text" id="s_confName" placeholder="e.g. NASPA 2026">
-        <span class="hint">Auto-fills the Conference Name field on the main screen. Edit it there any time for one-off overrides.</span>
+        <span class="hint">Auto-fills the Conference Name field on the main screen.</span>
       </div>
-
       <div class="settings-group">
         <label>Default Email Address</label>
         <input type="email" id="s_email" placeholder="you@example.com">
-        <span class="hint">Pre-filled in the Email Me dialog so you never have to type it.</span>
+        <span class="hint">Pre-filled in the Email Me dialog.</span>
       </div>
-
     </div>
     <div class="settings-footer">
       <button class="settings-forget" onclick="clearAllSettings()">Clear All</button>
@@ -500,11 +470,11 @@
   </div>
 </div>
 
-<!-- Paste transcript modal -->
-<div class="modal-overlay paste-modal" id="pasteModal">
+<!-- Paste modal -->
+<div class="modal-overlay" id="pasteModal">
   <div class="modal">
     <h3>Paste Transcript</h3>
-    <p>Paste previously copied transcript text here. Any header block from a Save will be stripped automatically.</p>
+    <p>Paste previously copied transcript text here.</p>
     <textarea id="pasteArea" placeholder="Paste transcript text here..."></textarea>
     <div class="modal-btns">
       <button class="modal-cancel" onclick="closePasteModal()">Cancel</button>
@@ -516,329 +486,318 @@
 <div class="toast" id="toast"></div>
 
 <script>
-// ── Storage keys ───────────────────────────────────────────
-const SK = { apiKey: 'ss017_apikey', confName: 'ss017_confname', email: 'ss017_email' };
+// ── Storage ────────────────────────────────────────────────
+const SK = { apiKey:'ss017_apikey', confName:'ss017_confname', email:'ss017_email' };
+function getSetting(k)      { try { return localStorage.getItem(k)||''; } catch(e){ return ''; } }
+function setSetting(k,v)    { try { localStorage.setItem(k,v); } catch(e){} }
+function removeSetting(k)   { try { localStorage.removeItem(k); } catch(e){} }
 
-// ── Runtime state ──────────────────────────────────────────
-let isRecording = false, recognition = null, timerInterval = null;
-let seconds = 0, finalTranscript = '', interimTranscript = '', lastResults = '';
+// ── State ──────────────────────────────────────────────────
+let isRecording=false, recognition=null, timerInterval=null;
+let seconds=0, finalTranscript='', interimTranscript='', lastResults='';
 
-// ── Storage helpers ────────────────────────────────────────
-function getSetting(key)      { try { return localStorage.getItem(key) || ''; } catch(e) { return ''; } }
-function setSetting(key, val) { try { localStorage.setItem(key, val); } catch(e) {} }
-function removeSetting(key)   { try { localStorage.removeItem(key); } catch(e) {} }
+// ── Key helpers ────────────────────────────────────────────
+function isValidKey(v){ v=v||getSetting(SK.apiKey); return v.startsWith('sk-ant-')&&v.length>20; }
+function getKey(){ return getSetting(SK.apiKey); }
 
-// ── Key validation ─────────────────────────────────────────
-function isValidKey(val) { val = val || getSetting(SK.apiKey); return val.startsWith('sk-ant-') && val.length > 20; }
-function getKey() { return getSetting(SK.apiKey); }
-
-// ── Load settings ──────────────────────────────────────────
-function loadSettings() {
-  const key = getSetting(SK.apiKey), conf = getSetting(SK.confName), email = getSetting(SK.email);
+// ── Settings load ──────────────────────────────────────────
+function loadSettings(){
+  const key=getSetting(SK.apiKey), conf=getSetting(SK.confName);
   document.getElementById('s_apiKey').value   = key;
   document.getElementById('s_confName').value = conf;
-  document.getElementById('s_email').value    = email;
+  document.getElementById('s_email').value    = getSetting(SK.email);
   updateSettingsKeyDot();
-  const confField = document.getElementById('conferenceTag');
-  if (conf) { confField.value = conf; confField.classList.add('autofilled'); }
+  if(conf){ document.getElementById('conferenceTag').value=conf; document.getElementById('conferenceTag').classList.add('autofilled'); }
   updateGearDot();
 }
-
-document.addEventListener('DOMContentLoaded', () => {
-  document.getElementById('conferenceTag').addEventListener('input', function() {
-    this.classList.remove('autofilled');
-  });
+document.addEventListener('DOMContentLoaded',()=>{
+  document.getElementById('conferenceTag').addEventListener('input',function(){ this.classList.remove('autofilled'); });
 });
-
-function updateGearDot() {
-  document.getElementById('settingsBtn').classList.toggle('needs-setup', !isValidKey() || !getSetting(SK.email));
-}
-function updateSettingsKeyDot() {
-  document.getElementById('s_keyDot').className = 'key-dot' + (isValidKey(document.getElementById('s_apiKey').value.trim()) ? ' ok' : '');
-}
-document.getElementById('s_apiKey').addEventListener('input', updateSettingsKeyDot);
+function updateGearDot(){ document.getElementById('settingsBtn').classList.toggle('needs-setup',!isValidKey()||!getSetting(SK.email)); }
+function updateSettingsKeyDot(){ document.getElementById('s_keyDot').className='key-dot'+(isValidKey(document.getElementById('s_apiKey').value.trim())?' ok':''); }
+document.getElementById('s_apiKey').addEventListener('input',updateSettingsKeyDot);
 
 // ── Settings panel ─────────────────────────────────────────
-function toggleSettings() { document.getElementById('settingsPanel').classList.contains('open') ? closeSettings() : openSettings(); }
-function openSettings() {
+function toggleSettings(){ document.getElementById('settingsPanel').classList.contains('open')?closeSettings():openSettings(); }
+function openSettings(){
   document.getElementById('settingsPanel').classList.add('open');
   document.getElementById('settingsScrim').classList.add('open');
   document.getElementById('settingsBtn').classList.add('active');
 }
-function closeSettings() {
+function closeSettings(){
   document.getElementById('settingsPanel').classList.remove('open');
   document.getElementById('settingsScrim').classList.remove('open');
   document.getElementById('settingsBtn').classList.remove('active');
 }
-
-function saveSettings() {
-  const key = document.getElementById('s_apiKey').value.trim();
-  const conf = document.getElementById('s_confName').value.trim();
-  const email = document.getElementById('s_email').value.trim();
-  key   ? setSetting(SK.apiKey, key)    : removeSetting(SK.apiKey);
-  conf  ? setSetting(SK.confName, conf) : removeSetting(SK.confName);
-  email ? setSetting(SK.email, email)   : removeSetting(SK.email);
-  const confField = document.getElementById('conferenceTag');
-  if (conf) { confField.value = conf; confField.classList.add('autofilled'); }
-  else if (confField.classList.contains('autofilled')) { confField.value = ''; confField.classList.remove('autofilled'); }
-  updateGearDot();
-  hideInlineError();
-  closeSettings();
-  showToast('Settings saved', 'success');
+function saveSettings(){
+  const key=document.getElementById('s_apiKey').value.trim();
+  const conf=document.getElementById('s_confName').value.trim();
+  const email=document.getElementById('s_email').value.trim();
+  key  ?setSetting(SK.apiKey,key)   :removeSetting(SK.apiKey);
+  conf ?setSetting(SK.confName,conf):removeSetting(SK.confName);
+  email?setSetting(SK.email,email)  :removeSetting(SK.email);
+  const cf=document.getElementById('conferenceTag');
+  if(conf){ cf.value=conf; cf.classList.add('autofilled'); }
+  else if(cf.classList.contains('autofilled')){ cf.value=''; cf.classList.remove('autofilled'); }
+  updateGearDot(); hideInlineError(); closeSettings();
+  showToast('Settings saved','success');
 }
-
-function clearAllSettings() {
-  if (!confirm('Clear all saved settings?')) return;
-  [SK.apiKey, SK.confName, SK.email].forEach(removeSetting);
-  ['s_apiKey','s_confName','s_email'].forEach(id => document.getElementById(id).value = '');
-  document.getElementById('conferenceTag').value = '';
+function clearAllSettings(){
+  if(!confirm('Clear all saved settings?')) return;
+  [SK.apiKey,SK.confName,SK.email].forEach(removeSetting);
+  ['s_apiKey','s_confName','s_email'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('conferenceTag').value='';
   document.getElementById('conferenceTag').classList.remove('autofilled');
-  updateSettingsKeyDot();
-  updateGearDot();
-  showToast('Settings cleared', '');
+  updateSettingsKeyDot(); updateGearDot();
+  showToast('Settings cleared','');
 }
 
 // ── Inline error ───────────────────────────────────────────
-function showInlineError(msg, actionLabel, actionFn) {
-  document.getElementById('inlineErrorMsg').textContent = msg;
-  const btn = document.getElementById('inlineErrorAction');
-  if (actionLabel) { btn.textContent = actionLabel; btn.onclick = actionFn; btn.style.display = 'inline'; }
-  else { btn.style.display = 'none'; }
+function showInlineError(msg,label,fn){
+  document.getElementById('inlineErrorMsg').textContent=msg;
+  const btn=document.getElementById('inlineErrorAction');
+  if(label){ btn.textContent=label; btn.onclick=fn; btn.style.display='inline'; }
+  else { btn.style.display='none'; }
   document.getElementById('inlineError').classList.add('visible');
 }
-function hideInlineError() { document.getElementById('inlineError').classList.remove('visible'); }
+function hideInlineError(){ document.getElementById('inlineError').classList.remove('visible'); }
+
+// ── Speech error display ───────────────────────────────────
+function showSpeechError(msg){
+  const el=document.getElementById('speechError');
+  el.textContent=msg; el.classList.add('visible');
+}
+function hideSpeechError(){ document.getElementById('speechError').classList.remove('visible'); }
 
 // ── Timer ──────────────────────────────────────────────────
-function startTimer() {
-  seconds = 0;
-  timerInterval = setInterval(() => {
+function startTimer(){
+  seconds=0;
+  timerInterval=setInterval(()=>{
     seconds++;
-    const h = String(Math.floor(seconds/3600)).padStart(2,'0');
-    const m = String(Math.floor((seconds%3600)/60)).padStart(2,'0');
-    const s = String(seconds%60).padStart(2,'0');
-    document.getElementById('timer').textContent = `${h}:${m}:${s}`;
-  }, 1000);
+    const h=String(Math.floor(seconds/3600)).padStart(2,'0');
+    const m=String(Math.floor((seconds%3600)/60)).padStart(2,'0');
+    const s=String(seconds%60).padStart(2,'0');
+    document.getElementById('timer').textContent=`${h}:${m}:${s}`;
+  },1000);
   document.getElementById('timer').classList.add('recording');
 }
-function stopTimer() { clearInterval(timerInterval); document.getElementById('timer').classList.remove('recording'); }
+function stopTimer(){ clearInterval(timerInterval); document.getElementById('timer').classList.remove('recording'); }
 
 // ── Speech Recognition ─────────────────────────────────────
-function initRecognition() {
-  const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
-  if (!SR) { showToast('Speech recognition not supported — use Chrome or Safari', 'error'); return null; }
-  const r = new SR();
-  r.continuous = true; r.interimResults = true; r.lang = 'en-US';
-  r.onresult = (e) => {
-    interimTranscript = '';
-    for (let i = e.resultIndex; i < e.results.length; i++) {
-      const txt = e.results[i][0].transcript;
-      if (e.results[i].isFinal) finalTranscript += txt + ' ';
-      else interimTranscript = txt;
+function initRecognition(){
+  const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
+  if(!SR){ showSpeechError('Web Speech API not available in this browser. Try Safari or Chrome.'); return null; }
+  const r=new SR();
+  r.continuous=true;
+  r.interimResults=true;
+  r.lang='en-US';
+
+  r.onstart=()=>{
+    hideSpeechError();
+    document.getElementById('transcriptBox').innerHTML='<span style="color:var(--muted);font-style:italic">Listening — speak now...</span>';
+    document.getElementById('recordStatus').textContent='RECORDING';
+  };
+
+  r.onresult=(e)=>{
+    interimTranscript='';
+    for(let i=e.resultIndex;i<e.results.length;i++){
+      const txt=e.results[i][0].transcript;
+      if(e.results[i].isFinal) finalTranscript+=txt+' ';
+      else interimTranscript=txt;
     }
     renderTranscript();
     updateTranscriptBtns();
-    // update status to confirm it's actively transcribing
-    if (isRecording) document.getElementById('recordStatus').textContent = 'RECORDING';
   };
-  r.onerror = (e) => {
-    if (e.error === 'not-allowed') { showToast('Microphone permission denied', 'error'); stopRecording(); }
-    else if (e.error !== 'no-speech') showToast('Speech error: ' + e.error, 'error');
+
+  r.onerror=(e)=>{
+    // 'no-speech' is routine — don't surface it
+    if(e.error==='no-speech') return;
+    // 'not-allowed' means mic permission denied
+    if(e.error==='not-allowed'){
+      showSpeechError('Microphone permission denied. Allow mic access in your browser settings, then try again.');
+      stopRecording(); return;
+    }
+    // Show all other error codes visibly so we can diagnose
+    showSpeechError('Speech recognition error: "' + e.error + '". If this persists, try reloading the page.');
   };
-  r.onend = () => { if (isRecording) r.start(); };
+
+  // Safari fires onend roughly every 60s; restart automatically while recording
+  r.onend=()=>{
+    if(isRecording){
+      try{ r.start(); }
+      catch(e){ showSpeechError('Could not restart recognition: '+e.message); }
+    }
+  };
+
   return r;
 }
 
-function renderTranscript() {
-  const box = document.getElementById('transcriptBox');
-  box.innerHTML = '';
-  if (finalTranscript) {
-    const f = document.createElement('span'); f.className = 'final'; f.textContent = finalTranscript; box.appendChild(f);
+function renderTranscript(){
+  const box=document.getElementById('transcriptBox');
+  box.innerHTML='';
+  if(finalTranscript){
+    const f=document.createElement('span'); f.className='final'; f.textContent=finalTranscript; box.appendChild(f);
   }
-  if (interimTranscript) {
-    const i = document.createElement('span'); i.className = 'interim'; i.textContent = interimTranscript; box.appendChild(i);
+  if(interimTranscript){
+    const i=document.createElement('span'); i.className='interim'; i.textContent=interimTranscript; box.appendChild(i);
   }
-  box.scrollTop = box.scrollHeight;
+  box.scrollTop=box.scrollHeight;
 }
 
-// ── Record ─────────────────────────────────────────────────
-function startRecording() {
-  if (isRecording) return;
-  if (!isValidKey()) { showToast('Add your API key in Settings first', 'error'); return; }
+// ── Start / Stop ───────────────────────────────────────────
+function startRecording(){
+  if(isRecording) return;
+  if(!isValidKey()){ showToast('Add your API key in Settings first','error'); return; }
 
-  // Request mic permission first, then start recognizer in a fresh
-  // setTimeout — Safari requires the recognizer to start outside the
-  // getUserMedia promise chain or it silently fails to fire onresult.
-  navigator.mediaDevices.getUserMedia({ audio: true })
-    .then((stream) => {
-      // Stop the stream immediately — we only needed permission.
-      // SpeechRecognition manages its own audio capture.
-      stream.getTracks().forEach(t => t.stop());
+  hideSpeechError();
 
-      finalTranscript = ''; interimTranscript = '';
+  // Step 1: request mic permission to get the browser prompt out of the way.
+  // We immediately stop that stream — SpeechRecognition manages its own capture.
+  // Step 2: start the recognizer in a setTimeout so it runs outside the
+  // getUserMedia promise chain. Safari requires this or onresult never fires.
+  navigator.mediaDevices.getUserMedia({audio:true})
+    .then(stream=>{
+      stream.getTracks().forEach(t=>t.stop());
+      finalTranscript=''; interimTranscript='';
       hideInlineError();
-      document.getElementById('transcriptBox').innerHTML =
-        '<span style="color:var(--muted);font-style:italic">Starting...</span>';
 
-      setTimeout(() => {
-        recognition = initRecognition();
-        if (!recognition) return;
-        try {
-          recognition.start();
-        } catch(e) {
-          showToast('Could not start recognition: ' + e.message, 'error');
-          return;
-        }
-        isRecording = true;
+      setTimeout(()=>{
+        recognition=initRecognition();
+        if(!recognition) return;
+        try{ recognition.start(); }
+        catch(e){ showSpeechError('Could not start: '+e.message); return; }
+        isRecording=true;
         startTimer();
-        // swap buttons
         document.getElementById('recordBtn').classList.add('hidden');
         document.getElementById('stopBtn').classList.add('visible');
-        document.getElementById('recordStatus').textContent = 'RECORDING';
+        document.getElementById('recordStatus').textContent='STARTING...';
         document.getElementById('recordStatus').classList.add('active');
-        document.getElementById('processBtn').disabled = true;
+        document.getElementById('processBtn').disabled=true;
         updateTranscriptBtns();
-      }, 300);
+      }, 350);
     })
-    .catch(() => showToast('Microphone permission denied', 'error'));
+    .catch(()=>showSpeechError('Microphone permission denied. Allow mic access and try again.'));
 }
 
-function stopRecording() {
-  if (!isRecording) return;
-  isRecording = false;
-  if (recognition) {
-    try { recognition.stop(); } catch(e) {}
-    recognition = null;
-  }
+function stopRecording(){
+  if(!isRecording) return;
+  isRecording=false;
+  if(recognition){ try{ recognition.stop(); }catch(e){} recognition=null; }
   stopTimer();
-  // swap buttons back
   document.getElementById('recordBtn').classList.remove('hidden');
-  document.getElementById('recordBtn').classList.remove('recording');
   document.getElementById('stopBtn').classList.remove('visible');
-  document.getElementById('recordStatus').textContent = 'RECORDING STOPPED';
+  document.getElementById('recordStatus').textContent='RECORDING STOPPED';
   document.getElementById('recordStatus').classList.remove('active');
-  if (interimTranscript) { finalTranscript += interimTranscript + ' '; interimTranscript = ''; renderTranscript(); }
-  document.getElementById('processBtn').disabled = finalTranscript.trim().length < 50;
+  if(interimTranscript){ finalTranscript+=interimTranscript+' '; interimTranscript=''; renderTranscript(); }
+  document.getElementById('processBtn').disabled=finalTranscript.trim().length<50;
   updateTranscriptBtns();
 }
 
-// ── Transcript action buttons state ───────────────────────
-function updateTranscriptBtns() {
-  const hasText = finalTranscript.trim().length > 0;
-  const recording = isRecording;
-  document.getElementById('saveTranscriptBtn').disabled  = !hasText || recording;
-  document.getElementById('copyTranscriptBtn').disabled  = !hasText || recording;
+// ── Transcript buttons ─────────────────────────────────────
+function updateTranscriptBtns(){
+  const has=finalTranscript.trim().length>0;
+  document.getElementById('saveTranscriptBtn').disabled=!has||isRecording;
+  document.getElementById('copyTranscriptBtn').disabled=!has||isRecording;
 }
 
-// ── Save transcript ────────────────────────────────────────
-function buildTranscriptHeader() {
-  const title   = document.getElementById('sessionTitle').value.trim();
-  const speaker = document.getElementById('speakerName').value.trim();
-  const conf    = document.getElementById('conferenceTag').value.trim();
-  const date    = new Date().toISOString().slice(0, 10);
+// ── Save / Copy transcript ─────────────────────────────────
+function buildHeader(){
+  const title=document.getElementById('sessionTitle').value.trim();
+  const speaker=document.getElementById('speakerName').value.trim();
+  const conf=document.getElementById('conferenceTag').value.trim();
   return [
     '=== SESSION SCRIBE — RAW TRANSCRIPT ===',
-    `Date:       ${date}`,
-    title   ? `Session:    ${title}`   : null,
-    speaker ? `Speaker:    ${speaker}` : null,
-    conf    ? `Conference: ${conf}`    : null,
+    `Date:       ${new Date().toISOString().slice(0,10)}`,
+    title  ?`Session:    ${title}`  :null,
+    speaker?`Speaker:    ${speaker}`:null,
+    conf   ?`Conference: ${conf}`   :null,
     `Duration:   ${document.getElementById('timer').textContent}`,
-    '========================================',
-    ''
+    '========================================',''
   ].filter(Boolean).join('\n');
 }
 
-function saveTranscript() {
-  if (!finalTranscript.trim()) return;
-  const title = document.getElementById('sessionTitle').value.trim();
-  const conf  = document.getElementById('conferenceTag').value.trim();
-  const date  = new Date().toISOString().slice(0, 10);
-  const content = buildTranscriptHeader() + finalTranscript.trim();
-  const blob = new Blob([content], { type: 'text/plain' });
-  const slug = [date, conf, title].filter(Boolean).join('_').replace(/\s+/g, '-').toLowerCase().slice(0, 60);
-  const a = document.createElement('a');
-  a.href = URL.createObjectURL(blob);
-  a.download = `transcript_${slug || 'session'}.txt`;
+function saveTranscript(){
+  if(!finalTranscript.trim()) return;
+  const title=document.getElementById('sessionTitle').value.trim();
+  const conf=document.getElementById('conferenceTag').value.trim();
+  const date=new Date().toISOString().slice(0,10);
+  const slug=[date,conf,title].filter(Boolean).join('_').replace(/\s+/g,'-').toLowerCase().slice(0,60);
+  const blob=new Blob([buildHeader()+finalTranscript.trim()],{type:'text/plain'});
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(blob);
+  a.download=`transcript_${slug||'session'}.txt`;
   a.click();
   URL.revokeObjectURL(a.href);
-  showToast('Transcript saved — check your Files app', 'success');
+  showToast('Transcript saved — check your Files app','success');
 }
 
-// ── Copy transcript ────────────────────────────────────────
-function copyTranscript() {
-  if (!finalTranscript.trim()) return;
-  const content = buildTranscriptHeader() + finalTranscript.trim();
-  navigator.clipboard.writeText(content)
-    .then(() => showToast('Transcript copied — paste into Notes or Mail', 'success'))
-    .catch(()  => showToast('Copy failed', 'error'));
+function copyTranscript(){
+  if(!finalTranscript.trim()) return;
+  navigator.clipboard.writeText(buildHeader()+finalTranscript.trim())
+    .then(()=>showToast('Transcript copied — paste into Notes or Mail','success'))
+    .catch(()=>showToast('Copy failed','error'));
 }
 
-// ── Load transcript from file ──────────────────────────────
-function stripHeader(text) {
-  const marker = '========================================';
-  const idx = text.indexOf(marker);
-  return idx !== -1 ? text.slice(idx + marker.length).trim() : text.trim();
+// ── Load / Paste transcript ────────────────────────────────
+function stripHeader(text){
+  const marker='========================================';
+  const idx=text.indexOf(marker);
+  return idx!==-1?text.slice(idx+marker.length).trim():text.trim();
 }
 
-function loadTranscript(event) {
-  const file = event.target.files[0];
-  if (!file) return;
-  const reader = new FileReader();
-  reader.onload = (e) => {
-    finalTranscript = stripHeader(e.target.result);
-    interimTranscript = '';
-    renderTranscript();
-    updateTranscriptBtns();
-    document.getElementById('processBtn').disabled = false;
-    showToast('Transcript loaded — ready to generate', 'success');
+function loadTranscript(event){
+  const file=event.target.files[0]; if(!file) return;
+  const reader=new FileReader();
+  reader.onload=e=>{
+    finalTranscript=stripHeader(e.target.result);
+    interimTranscript='';
+    renderTranscript(); updateTranscriptBtns();
+    document.getElementById('processBtn').disabled=finalTranscript.trim().length<50;
+    showToast('Transcript loaded — ready to generate','success');
   };
   reader.readAsText(file);
-  event.target.value = '';
+  event.target.value='';
 }
 
-// ── Paste transcript modal ─────────────────────────────────
-function openPasteModal()  { document.getElementById('pasteArea').value = ''; document.getElementById('pasteModal').classList.add('open'); }
-function closePasteModal() { document.getElementById('pasteModal').classList.remove('open'); }
-
-function confirmPaste() {
-  const text = document.getElementById('pasteArea').value.trim();
-  if (!text) { showToast('Nothing to load', 'error'); return; }
-  finalTranscript = stripHeader(text);
-  interimTranscript = '';
-  renderTranscript();
-  updateTranscriptBtns();
-  document.getElementById('processBtn').disabled = false;
+function openPasteModal(){ document.getElementById('pasteArea').value=''; document.getElementById('pasteModal').classList.add('open'); }
+function closePasteModal(){ document.getElementById('pasteModal').classList.remove('open'); }
+function confirmPaste(){
+  const text=document.getElementById('pasteArea').value.trim();
+  if(!text){ showToast('Nothing to load','error'); return; }
+  finalTranscript=stripHeader(text); interimTranscript='';
+  renderTranscript(); updateTranscriptBtns();
+  document.getElementById('processBtn').disabled=finalTranscript.trim().length<50;
   closePasteModal();
-  showToast('Transcript loaded — ready to generate', 'success');
+  showToast('Transcript loaded — ready to generate','success');
 }
 
 // ── Process ────────────────────────────────────────────────
-async function processTranscript() {
+async function processTranscript(){
   hideInlineError();
-  if (!finalTranscript.trim() || finalTranscript.trim().length < 50) {
-    showInlineError('No transcript to process — record a session first.', null, null); return;
+  if(!finalTranscript.trim()||finalTranscript.trim().length<50){
+    showInlineError('No transcript to process — record a session first.',null,null); return;
   }
-  if (!isValidKey()) {
-    showInlineError('No API key found.', 'Open Settings →', openSettings); return;
+  if(!isValidKey()){
+    showInlineError('No API key found.','Open Settings →',openSettings); return;
   }
-  if (!getSetting(SK.email)) showToast('No default email saved — add one in Settings to email notes', '');
+  if(!getSetting(SK.email)) showToast('No default email saved — add one in Settings','');
 
-  const key     = getKey();
-  const title   = document.getElementById('sessionTitle').value.trim()   || 'Untitled Session';
-  const speaker = document.getElementById('speakerName').value.trim();
-  const conf    = document.getElementById('conferenceTag').value.trim();
-  const rawText = finalTranscript.trim();
+  const key=getKey();
+  const title=document.getElementById('sessionTitle').value.trim()||'Untitled Session';
+  const speaker=document.getElementById('speakerName').value.trim();
+  const conf=document.getElementById('conferenceTag').value.trim();
+  const rawText=finalTranscript.trim();
+  const duration=document.getElementById('timer').textContent;
+  const dateStr=new Date().toLocaleDateString('en-US',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
 
-  const btn = document.getElementById('processBtn');
-  btn.classList.add('loading'); btn.textContent = '⟳ Processing transcript...'; btn.disabled = true;
+  const btn=document.getElementById('processBtn');
+  btn.classList.add('loading'); btn.textContent='⟳ Processing transcript...'; btn.disabled=true;
 
-  const duration = document.getElementById('timer').textContent;
-  const dateStr  = new Date().toLocaleDateString('en-US', { weekday:'long', year:'numeric', month:'long', day:'numeric' });
-
-  const prompt =
+  const prompt=
 `You are a professional conference note-taker. Below is a raw speech-to-text transcript. Clean up recognition errors, filler words, and run-on sentences, then extract the essential content.
 
 Session: "${title}"
-${speaker ? `Speaker: ${speaker}\n` : ''}${conf ? `Conference: ${conf}\n` : ''}Duration: ${duration}
+${speaker?`Speaker: ${speaker}\n`:''}${conf?`Conference: ${conf}\n`:''}Duration: ${duration}
 
 RAW TRANSCRIPT:
 ${rawText}
@@ -848,7 +807,7 @@ Return structured session notes in exactly this format:
 SESSION NOTES
 =============
 Title: ${title}
-${speaker ? `Speaker: ${speaker}\n` : ''}${conf ? `Conference: ${conf}\n` : ''}Duration: ${duration}
+${speaker?`Speaker: ${speaker}\n`:''}${conf?`Conference: ${conf}\n`:''}Duration: ${duration}
 Date: ${dateStr}
 
 ─────────────────────────────────────────
@@ -878,66 +837,62 @@ QUESTIONS / FOLLOW-UP
 
 Be concise and precise. Preserve the speaker's actual ideas faithfully.`;
 
-  try {
-    const response = await fetch('https://api.anthropic.com/v1/messages', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'x-api-key': key,
-        'anthropic-version': '2023-06-01',
-        'anthropic-dangerous-direct-browser-access': 'true'
+  try{
+    const response=await fetch('https://api.anthropic.com/v1/messages',{
+      method:'POST',
+      headers:{
+        'Content-Type':'application/json',
+        'x-api-key':key,
+        'anthropic-version':'2023-06-01',
+        'anthropic-dangerous-direct-browser-access':'true'
       },
-      body: JSON.stringify({ model: 'claude-sonnet-4-20250514', max_tokens: 4096, messages: [{ role: 'user', content: prompt }] })
+      body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:4096,messages:[{role:'user',content:prompt}]})
     });
-    const data = await response.json();
-    if (data.error) throw new Error(data.error.message);
-    lastResults = data.content[0].text;
-    document.getElementById('resultsContent').textContent = lastResults;
+    const data=await response.json();
+    if(data.error) throw new Error(data.error.message);
+    lastResults=data.content[0].text;
+    document.getElementById('resultsContent').textContent=lastResults;
     document.getElementById('resultsSection').classList.add('visible');
-    document.getElementById('resultsSection').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-    btn.classList.remove('loading'); btn.textContent = '✦ Regenerate'; btn.disabled = false;
-  } catch(err) {
-    showInlineError('API error: ' + err.message, null, null);
-    btn.classList.remove('loading'); btn.textContent = '✦ Generate Outline & Summary'; btn.disabled = false;
+    document.getElementById('resultsSection').scrollIntoView({behavior:'smooth',block:'nearest'});
+    btn.classList.remove('loading'); btn.textContent='✦ Regenerate'; btn.disabled=false;
+  }catch(err){
+    showInlineError('API error: '+err.message,null,null);
+    btn.classList.remove('loading'); btn.textContent='✦ Generate Outline & Summary'; btn.disabled=false;
   }
 }
 
 // ── Copy results ───────────────────────────────────────────
-function copyResults() {
-  if (!lastResults) return;
+function copyResults(){
+  if(!lastResults) return;
   navigator.clipboard.writeText(lastResults)
-    .then(() => showToast('Copied to clipboard', 'success'))
-    .catch(()  => showToast('Copy failed', 'error'));
+    .then(()=>showToast('Copied to clipboard','success'))
+    .catch(()=>showToast('Copy failed','error'));
 }
 
 // ── Email ──────────────────────────────────────────────────
-function openEmailModal() {
-  const saved = getSetting(SK.email);
-  if (saved) document.getElementById('emailAddr').value = saved;
+function openEmailModal(){
+  const saved=getSetting(SK.email);
+  if(saved) document.getElementById('emailAddr').value=saved;
   document.getElementById('emailModal').classList.add('open');
 }
-function closeEmailModal() { document.getElementById('emailModal').classList.remove('open'); }
-
-function sendEmail() {
-  const email = document.getElementById('emailAddr').value.trim();
-  if (!email || !email.includes('@')) { showToast('Enter a valid email address', 'error'); return; }
-  if (!lastResults) return;
-  const title   = document.getElementById('sessionTitle').value.trim() || 'Conference Session Notes';
-  const subject = encodeURIComponent(`Session Notes: ${title}`);
-  const body    = encodeURIComponent(`Here are your notes from the conference session.\n\n${lastResults}\n\n— Session Scribe · AppADay #017`);
+function closeEmailModal(){ document.getElementById('emailModal').classList.remove('open'); }
+function sendEmail(){
+  const email=document.getElementById('emailAddr').value.trim();
+  if(!email||!email.includes('@')){ showToast('Enter a valid email address','error'); return; }
+  if(!lastResults) return;
+  const title=document.getElementById('sessionTitle').value.trim()||'Conference Session Notes';
+  const subject=encodeURIComponent(`Session Notes: ${title}`);
+  const body=encodeURIComponent(`Here are your notes from the conference session.\n\n${lastResults}\n\n— Session Scribe · AppADay #017`);
   closeEmailModal();
-  const a = document.createElement('a');
-  a.href = `mailto:${email}?subject=${subject}&body=${body}`;
-  a.click();
-  showToast('Opening mail app...', 'success');
+  const a=document.createElement('a'); a.href=`mailto:${email}?subject=${subject}&body=${body}`; a.click();
+  showToast('Opening mail app...','success');
 }
 
 // ── Toast ──────────────────────────────────────────────────
-function showToast(msg, type = '') {
-  const t = document.getElementById('toast');
-  t.textContent = msg;
-  t.className = 'toast show' + (type ? ' ' + type : '');
-  setTimeout(() => { t.className = 'toast'; }, 3500);
+function showToast(msg,type=''){
+  const t=document.getElementById('toast');
+  t.textContent=msg; t.className='toast show'+(type?' '+type:'');
+  setTimeout(()=>{ t.className='toast'; },3500);
 }
 
 // ── Init ───────────────────────────────────────────────────
