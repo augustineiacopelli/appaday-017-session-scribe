@@ -182,6 +182,19 @@
   }
   .record-btn:hover { border-color: var(--accent); transform: scale(1.05); }
   .record-btn.recording { border-color: var(--recording); background: rgba(255,71,87,0.1); animation: pulse-ring 1.5s infinite; }
+  /* hide record btn while recording */
+  .record-btn.hidden { display: none; }
+
+  .stop-btn {
+    display: none;
+    padding: 13px 28px; border-radius: 12px;
+    border: 2px solid var(--recording); background: rgba(255,71,87,0.12);
+    color: var(--recording); font-family: 'Syne', sans-serif;
+    font-size: 15px; font-weight: 700; cursor: pointer; letter-spacing: 0.04em;
+    transition: all 0.15s; -webkit-tap-highlight-color: transparent;
+  }
+  .stop-btn.visible { display: block; }
+  .stop-btn:hover { background: rgba(255,71,87,0.22); }
   @keyframes pulse-ring {
     0%   { box-shadow: 0 0 0 0 rgba(255,71,87,0.4); }
     70%  { box-shadow: 0 0 0 18px rgba(255,71,87,0); }
@@ -371,8 +384,11 @@
 
     <div class="record-area">
       <div class="timer" id="timer">00:00:00</div>
-      <button class="record-btn" id="recordBtn" onclick="toggleRecording()">
+      <button class="record-btn" id="recordBtn" onclick="startRecording()">
         <div class="record-icon"></div>
+      </button>
+      <button class="stop-btn" id="stopBtn" onclick="stopRecording()">
+        ■ Stop Recording
       </button>
       <div class="record-status" id="recordStatus">TAP TO BEGIN RECORDING</div>
     </div>
@@ -621,6 +637,8 @@ function initRecognition() {
     }
     renderTranscript();
     updateTranscriptBtns();
+    // update status to confirm it's actively transcribing
+    if (isRecording) document.getElementById('recordStatus').textContent = 'RECORDING';
   };
   r.onerror = (e) => {
     if (e.error === 'not-allowed') { showToast('Microphone permission denied', 'error'); stopRecording(); }
@@ -643,38 +661,63 @@ function renderTranscript() {
 }
 
 // ── Record ─────────────────────────────────────────────────
-function toggleRecording() { isRecording ? stopRecording() : startRecording(); }
-
 function startRecording() {
+  if (isRecording) return;
   if (!isValidKey()) { showToast('Add your API key in Settings first', 'error'); return; }
-  recognition = initRecognition();
-  if (!recognition) return;
+
+  // Request mic permission first, then start recognizer in a fresh
+  // setTimeout — Safari requires the recognizer to start outside the
+  // getUserMedia promise chain or it silently fails to fire onresult.
   navigator.mediaDevices.getUserMedia({ audio: true })
-    .then(() => {
+    .then((stream) => {
+      // Stop the stream immediately — we only needed permission.
+      // SpeechRecognition manages its own audio capture.
+      stream.getTracks().forEach(t => t.stop());
+
       finalTranscript = ''; interimTranscript = '';
       hideInlineError();
-      document.getElementById('transcriptBox').innerHTML = '<span style="color:var(--muted);font-style:italic">Listening...</span>';
-      recognition.start();
-      isRecording = true;
-      startTimer();
-      document.getElementById('recordBtn').classList.add('recording');
-      document.getElementById('recordStatus').textContent = 'RECORDING — TAP TO STOP';
-      document.getElementById('recordStatus').classList.add('active');
-      document.getElementById('processBtn').disabled = true;
-      updateTranscriptBtns();
+      document.getElementById('transcriptBox').innerHTML =
+        '<span style="color:var(--muted);font-style:italic">Starting...</span>';
+
+      setTimeout(() => {
+        recognition = initRecognition();
+        if (!recognition) return;
+        try {
+          recognition.start();
+        } catch(e) {
+          showToast('Could not start recognition: ' + e.message, 'error');
+          return;
+        }
+        isRecording = true;
+        startTimer();
+        // swap buttons
+        document.getElementById('recordBtn').classList.add('hidden');
+        document.getElementById('stopBtn').classList.add('visible');
+        document.getElementById('recordStatus').textContent = 'RECORDING';
+        document.getElementById('recordStatus').classList.add('active');
+        document.getElementById('processBtn').disabled = true;
+        updateTranscriptBtns();
+      }, 300);
     })
     .catch(() => showToast('Microphone permission denied', 'error'));
 }
 
 function stopRecording() {
+  if (!isRecording) return;
   isRecording = false;
-  if (recognition) { recognition.stop(); recognition = null; }
+  if (recognition) {
+    try { recognition.stop(); } catch(e) {}
+    recognition = null;
+  }
   stopTimer();
+  // swap buttons back
+  document.getElementById('recordBtn').classList.remove('hidden');
   document.getElementById('recordBtn').classList.remove('recording');
+  document.getElementById('stopBtn').classList.remove('visible');
   document.getElementById('recordStatus').textContent = 'RECORDING STOPPED';
   document.getElementById('recordStatus').classList.remove('active');
   if (interimTranscript) { finalTranscript += interimTranscript + ' '; interimTranscript = ''; renderTranscript(); }
-  document.getElementById('processBtn').disabled = false;
+  document.getElementById('processBtn').disabled = finalTranscript.trim().length < 50;
   updateTranscriptBtns();
 }
 
