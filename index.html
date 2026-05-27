@@ -152,6 +152,8 @@
       <div class="record-status" id="recordStatus">TAP TO BEGIN RECORDING</div>
     </div>
     <div class="speech-error" id="speechError"></div>
+    <div class="inline-error" id="inlineError"><span id="inlineErrorMsg"></span><button id="inlineErrorAction"></button></div>
+    <button class="process-btn" id="processBtn" onclick="processTranscript()">&#10022; Generate Outline &amp; Summary</button>
     <div class="notice">&#9888; Transcription uses your browser's Web Speech API, which sends audio to Google's servers in real time. Internet required. Use Safari browser (not Home Screen app). Claude cleans up and punctuates the transcript on processing.</div>
   </div>
   <div class="col-right">
@@ -166,8 +168,6 @@
       <button class="ta-btn lb" onclick="openPasteModal()">&#9998; Paste</button>
       <input type="file" id="fileInput" accept=".txt" onchange="loadTranscript(event)">
     </div>
-    <div class="inline-error" id="inlineError"><span id="inlineErrorMsg"></span><button id="inlineErrorAction"></button></div>
-    <button class="process-btn" id="processBtn" onclick="processTranscript()">&#10022; Generate Outline &amp; Summary</button>
     <div class="results-section" id="resultsSection">
       <div class="results-header">
         <span class="results-title">&#10003; SESSION NOTES READY</span>
@@ -351,3 +351,4 @@ loadSettings();
 </script>
 </body>
 </html>
+
