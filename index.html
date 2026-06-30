@@ -130,7 +130,7 @@
   <span class="header-tag">APP · 017 · A</span>
   <span class="header-title">Session Scribe</span>
   <div class="header-right">
-    <a class="header-back" href="https://augustineiacopelli.github.io/appaday/">← portfolio</a>
+    <a class="header-back" href="https://augustineiacopelli.github.io">← portfolio</a>
     <button class="settings-btn" id="settingsBtn" onclick="toggleSettings()" title="Settings">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
       <span class="dot"></span>
@@ -140,6 +140,14 @@
 <div class="shell">
   <div class="settings-scrim" id="settingsScrim" onclick="closeSettings()"></div>
   <div class="col-left">
+    <!-- Recovery banner: shown on load if unsaved draft found -->
+    <div id="recoveryBanner" style="display:none;flex-direction:column;gap:8px;background:rgba(67,233,123,.07);border:1px solid rgba(67,233,123,.3);border-radius:10px;padding:12px 14px;">
+      <span id="recoveryText" style="font-family:'DM Mono',monospace;font-size:11px;color:var(--accent3);line-height:1.5;"></span>
+      <div style="display:flex;gap:8px;">
+        <button onclick="restoreDraft()" style="flex:1;padding:8px;border-radius:7px;border:none;background:var(--accent3);color:#0a0a0f;font-family:'Syne',sans-serif;font-size:13px;font-weight:700;cursor:pointer;">Restore</button>
+        <button onclick="discardDraft()" style="flex:1;padding:8px;border-radius:7px;border:1px solid var(--border);background:transparent;color:var(--muted);font-family:'Syne',sans-serif;font-size:13px;cursor:pointer;">Discard</button>
+      </div>
+    </div>
     <div class="meta-section">
       <input type="text" id="sessionTitle" placeholder="Session title">
       <input type="text" id="speakerName" placeholder="Speaker / presenter">
@@ -222,11 +230,57 @@
 </div>
 <div class="toast" id="toast"></div>
 <script>
-const SK={apiKey:'ss017_apikey',confName:'ss017_confname',email:'ss017_email'};
+const SK={apiKey:'ss017_apikey',confName:'ss017_confname',email:'ss017_email',draft:'ss017_draft'};
 const gs=k=>{try{return localStorage.getItem(k)||'';}catch(e){return '';}};
 const ss=(k,v)=>{try{localStorage.setItem(k,v);}catch(e){}};
 const rs=k=>{try{localStorage.removeItem(k);}catch(e){}};
 let isRecording=false,recognition=null,restartTimer=null,timerInterval=null,seconds=0;
+
+/* ── Draft auto-save ─────────────────────────────────────
+ * Saves transcript + session meta to localStorage on every
+ * final speech result. Cleared only after successful Generate
+ * or when user explicitly starts a new recording.
+ * ──────────────────────────────────────────────────────── */
+function saveDraft(){
+  if(!finalTranscript.trim()) return;
+  const draft={
+    transcript: finalTranscript,
+    title:      document.getElementById('sessionTitle').value.trim(),
+    speaker:    document.getElementById('speakerName').value.trim(),
+    conf:       document.getElementById('conferenceTag').value.trim(),
+    duration:   document.getElementById('timer').textContent,
+    saved:      new Date().toISOString()
+  };
+  ss(SK.draft, JSON.stringify(draft));
+}
+function clearDraft(){ rs(SK.draft); }
+function showRecoveryBanner(draft){
+  const d=new Date(draft.saved);
+  const when=d.toLocaleDateString('en-US',{month:'short',day:'numeric'})+' at '+d.toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit',hour12:true});
+  const words=draft.transcript.trim().split(/\s+/).length;
+  document.getElementById('recoveryText').textContent='Unsaved transcript found from '+when+' (~'+words+' words). Restore it?';
+  document.getElementById('recoveryBanner').style.display='flex';
+}
+function hideRecoveryBanner(){ document.getElementById('recoveryBanner').style.display='none'; }
+function restoreDraft(){
+  const raw=gs(SK.draft); if(!raw) return;
+  try{
+    const draft=JSON.parse(raw);
+    finalTranscript=draft.transcript; interimTranscript='';
+    if(draft.title)   document.getElementById('sessionTitle').value=draft.title;
+    if(draft.speaker) document.getElementById('speakerName').value=draft.speaker;
+    if(draft.conf)    document.getElementById('conferenceTag').value=draft.conf;
+    renderTranscript(); updateTABtns();
+    document.getElementById('processBtn').disabled=finalTranscript.trim().length<50;
+    hideRecoveryBanner();
+    showToast('Transcript restored — ready to generate','success');
+  }catch(e){ hideRecoveryBanner(); }
+}
+function discardDraft(){ clearDraft(); hideRecoveryBanner(); showToast('Draft discarded',''); }
+function checkForDraft(){
+  const raw=gs(SK.draft); if(!raw) return;
+  try{ const draft=JSON.parse(raw); if(draft.transcript&&draft.transcript.trim().length>50) showRecoveryBanner(draft); }catch(e){}
+}
 let recordStartTime=null,recordEndTime=null;
 let finalTranscript='',interimTranscript='',lastResults='';
 const isValidKey=(v=gs(SK.apiKey))=>v.startsWith('sk-ant-')&&v.length>20;
@@ -277,7 +331,7 @@ function createRecognizer(){
   const r=new SR();
   r.continuous=true;r.interimResults=true;r.lang='en-US';
   r.onstart=()=>{hideSpeechError();if(!finalTranscript)document.getElementById('transcriptBox').innerHTML='<span style="color:var(--muted);font-style:italic">Listening \u2014 speak now...</span>';document.getElementById('recordStatus').textContent='RECORDING';document.getElementById('recordStatus').classList.add('active');};
-  r.onresult=(e)=>{interimTranscript='';for(let i=e.resultIndex;i<e.results.length;i++){if(e.results[i].isFinal)finalTranscript+=e.results[i][0].transcript+' ';else interimTranscript=e.results[i][0].transcript;}renderTranscript();updateTABtns();};
+  r.onresult=(e)=>{interimTranscript='';for(let i=e.resultIndex;i<e.results.length;i++){if(e.results[i].isFinal)finalTranscript+=e.results[i][0].transcript+' ';else interimTranscript=e.results[i][0].transcript;}renderTranscript();updateTABtns();saveDraft();};
   r.onerror=(e)=>{if(e.error==='no-speech'||e.error==='aborted')return;if(e.error==='not-allowed'){showSpeechError('Microphone permission denied. Allow mic access in Safari settings.');doStop();return;}showSpeechError('Speech error: "'+e.error+'" \u2014 try reloading the page.');};
   r.onend=()=>{if(!isRecording)return;clearTimeout(restartTimer);restartTimer=setTimeout(()=>{if(!isRecording)return;recognition=createRecognizer();if(recognition)try{recognition.start();}catch(err){showSpeechError('Restart failed: '+err.message);}},600);};
   return r;
@@ -289,7 +343,7 @@ function startRecording(){
   hideSpeechError();
   navigator.mediaDevices.getUserMedia({audio:true}).then(stream=>{
     stream.getTracks().forEach(t=>t.stop());
-    finalTranscript='';interimTranscript='';hideInlineError();
+    finalTranscript='';interimTranscript='';clearDraft();hideInlineError();
     document.getElementById('transcriptBox').innerHTML='<span style="color:var(--muted);font-style:italic">Starting...</span>';
     document.getElementById('recordBtn').classList.add('hidden');
     document.getElementById('stopBtn').classList.add('visible');
@@ -329,10 +383,10 @@ async function processTranscript(){
   btn.classList.add('loading');btn.textContent='\u27F3 Processing transcript...';btn.disabled=true;
   const prompt='You are a professional conference note-taker and editor. Below is a raw speech-to-text transcript with NO punctuation, NO paragraph breaks, and likely some garbled words from the speech recognizer.\n\nYour job has two parts:\n1. Produce a CLEANED TRANSCRIPT: rewrite the raw text with proper punctuation, capitalization, paragraph breaks, and sentence structure. Fix obvious speech recognition errors using context. Remove filler words (um, uh, you know, like). Preserve the speaker\'s actual words and meaning faithfully \u2014 do not summarize or condense at this stage.\n2. Produce STRUCTURED NOTES from that cleaned transcript.\n\nSession: "'+title+'"\n'+(speaker?'Speaker: '+speaker+'\n':'')+(conf?'Conference: '+conf+'\n':'')+'Duration: '+duration+'\n\nRAW TRANSCRIPT:\n'+rawText+'\n\nReturn your response in exactly this format:\n\nSESSION NOTES\n=============\nTitle: '+title+'\n'+(speaker?'Speaker: '+speaker+'\n':'')+(conf?'Conference: '+conf+'\n':'')+'Date: '+dateStr+'\nStart: '+startTimeStr+'\nEnd:   '+endTimeStr+'\nDuration: '+duration+'\n\n\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\nSUMMARY\n\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\n[2-3 sentences capturing the core argument or purpose of this session]\n\n\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\nOUTLINE\n\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\n[Roman numeral outline of main topics with lettered sub-points]\n\n\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\nKEY TAKEAWAYS\n\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\n[3-7 concise bullet points with the most important ideas or actionable items]\n\n\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\nNOTABLE QUOTES / MOMENTS\n\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\n[Direct quotes worth preserving verbatim. Write "None captured." if not applicable.]\n\n\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\nQUESTIONS / FOLLOW-UP\n\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\n[Unanswered questions, things to research, or action items. Write "None noted." if not applicable.]\n\n\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\nCLEANED TRANSCRIPT\n\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\n[The full transcript rewritten with proper punctuation, capitalization, paragraph breaks, and filler words removed. Preserve the speaker\'s actual words faithfully \u2014 this is an edited transcript, not a summary.]';
   try{
-    const res=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json','x-api-key':key,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},body:JSON.stringify({model:'claude-sonnet-4-6',max_tokens:16000,messages:[{role:'user',content:prompt}]})});
+    const res=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json','x-api-key':key,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:16000,messages:[{role:'user',content:prompt}]})});
     const data=await res.json();
     if(data.error)throw new Error(data.error.message);
-    lastResults=data.content[0].text;
+    lastResults=data.content[0].text;clearDraft();
     document.getElementById('resultsContent').textContent=lastResults;
     document.getElementById('resultsSection').classList.add('visible');
     document.getElementById('resultsSection').scrollIntoView({behavior:'smooth',block:'nearest'});
@@ -347,8 +401,7 @@ function openEmailModal(){const saved=gs(SK.email);if(saved)document.getElementB
 function closeEmailModal(){document.getElementById('emailModal').classList.remove('open');}
 function sendEmail(){const email=document.getElementById('emailAddr').value.trim();if(!email||!email.includes('@')){showToast('Enter a valid email address','error');return;}if(!lastResults)return;const title=document.getElementById('sessionTitle').value.trim()||'Conference Session Notes';const a=document.createElement('a');a.href='mailto:'+email+'?subject='+encodeURIComponent('Session Notes: '+title)+'&body='+encodeURIComponent('Here are your notes from the conference session.\n\n'+lastResults+'\n\n\u2014 Session Scribe \u00B7 AppADay #017');closeEmailModal();a.click();showToast('Opening mail app...','success');}
 function showToast(msg,type){const t=document.getElementById('toast');t.textContent=msg;t.className='toast show'+(type?' '+type:'');setTimeout(()=>{t.className='toast';},3500);}
-loadSettings();
+loadSettings();checkForDraft();
 </script>
 </body>
 </html>
-
