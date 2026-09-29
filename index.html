@@ -402,7 +402,18 @@ function closeEmailModal(){document.getElementById('emailModal').classList.remov
 function sendEmail(){const email=document.getElementById('emailAddr').value.trim();if(!email||!email.includes('@')){showToast('Enter a valid email address','error');return;}if(!lastResults)return;const title=document.getElementById('sessionTitle').value.trim()||'Conference Session Notes';const a=document.createElement('a');a.href='mailto:'+email+'?subject='+encodeURIComponent('Session Notes: '+title)+'&body='+encodeURIComponent('Here are your notes from the conference session.\n\n'+lastResults+'\n\n\u2014 Session Scribe \u00B7 AppADay #017');closeEmailModal();a.click();showToast('Opening mail app...','success');}
 function showToast(msg,type){const t=document.getElementById('toast');t.textContent=msg;t.className='toast show'+(type?' '+type:'');setTimeout(()=>{t.className='toast';},3500);}
 loadSettings();checkForDraft();
+
+async function getModel(tier = 'sonnet') {
+  try {
+    const response = await fetch('../config.json');
+    const config = await response.json();
+    return config.models[tier];
+  } catch {
+    return 'claude-sonnet-5-5';
+  }
+}
 </script>
 </body>
 </html>
+
 
