@@ -10,6 +10,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black">
 <link rel="manifest" href="https://augustineiacopelli.github.io/appaday/manifests/017.webmanifest">
 <script src="https://augustineiacopelli.github.io/appaday/save.js" defer></script>
+<script src="https://augustineiacopelli.github.io/appaday/keys.js" data-app="017" data-legacy-key="ss017_apikey" data-accent="#C8401A" defer></script>
 <title>Session Scribe | AppADay 017</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -197,11 +198,7 @@
   <div class="settings-panel" id="settingsPanel">
     <div class="settings-header"><h2>Settings</h2><button class="settings-close" onclick="closeSettings()">&#10005;</button></div>
     <div class="settings-body">
-      <div class="settings-group">
-        <label>Anthropic API Key</label>
-        <div class="settings-key-row"><input type="password" id="s_apiKey" placeholder="sk-ant-..." autocomplete="off"><div class="key-dot" id="s_keyDot"></div></div>
-        <span class="hint">Saved locally. Never sent anywhere except api.anthropic.com.</span>
-      </div>
+      <div class="settings-group"><div id="keyMount"><span class="hint">The key manager is loading. If this stays, check your connection and reload.</span></div></div>
       <div class="settings-group">
         <label>Default Conference Name</label>
         <input type="text" id="s_confName" placeholder="e.g. NASPA 2026">
@@ -237,7 +234,7 @@
 </div>
 <div class="toast" id="toast"></div>
 <script>
-const SK={apiKey:'ss017_apikey',confName:'ss017_confname',email:'ss017_email',draft:'ss017_draft'};
+const SK={confName:'ss017_confname',email:'ss017_email',draft:'ss017_draft'};
 const gs=k=>{try{return localStorage.getItem(k)||'';}catch(e){return '';}};
 const ss=(k,v)=>{try{localStorage.setItem(k,v);}catch(e){}};
 const rs=k=>{try{localStorage.removeItem(k);}catch(e){}};
@@ -290,29 +287,24 @@ function checkForDraft(){
 }
 let recordStartTime=null,recordEndTime=null;
 let finalTranscript='',interimTranscript='',lastResults='';
-const isValidKey=(v=gs(SK.apiKey))=>v.startsWith('sk-ant-')&&v.length>20;
-const getKey=()=>gs(SK.apiKey);
+const isValidKey=()=>!!(window.AppKeys&&window.AppKeys.has());
 function loadSettings(){
-  document.getElementById('s_apiKey').value=gs(SK.apiKey);
   document.getElementById('s_confName').value=gs(SK.confName);
   document.getElementById('s_email').value=gs(SK.email);
-  updateKeyDot();
   const conf=gs(SK.confName);
   if(conf){document.getElementById('conferenceTag').value=conf;document.getElementById('conferenceTag').classList.add('autofilled');}
   updateGearDot();
 }
 document.addEventListener('DOMContentLoaded',()=>{document.getElementById('conferenceTag').addEventListener('input',function(){this.classList.remove('autofilled');});});
 const updateGearDot=()=>document.getElementById('settingsBtn').classList.toggle('needs-setup',!isValidKey()||!gs(SK.email));
-const updateKeyDot=()=>document.getElementById('s_keyDot').className='key-dot'+(isValidKey(document.getElementById('s_apiKey').value.trim())?' ok':'');
-document.getElementById('s_apiKey').addEventListener('input',updateKeyDot);
+window.addEventListener('appaday:keychange',()=>updateGearDot());
+document.addEventListener('DOMContentLoaded',()=>updateGearDot());
 function toggleSettings(){document.getElementById('settingsPanel').classList.contains('open')?closeSettings():openSettings();}
-function openSettings(){document.getElementById('settingsPanel').classList.add('open');document.getElementById('settingsScrim').classList.add('open');document.getElementById('settingsBtn').classList.add('active');}
+function openSettings(){if(window.AppKeys)window.AppKeys.mountSettings(document.getElementById('keyMount'));document.getElementById('settingsPanel').classList.add('open');document.getElementById('settingsScrim').classList.add('open');document.getElementById('settingsBtn').classList.add('active');}
 function closeSettings(){document.getElementById('settingsPanel').classList.remove('open');document.getElementById('settingsScrim').classList.remove('open');document.getElementById('settingsBtn').classList.remove('active');}
 function saveSettings(){
-  const key=document.getElementById('s_apiKey').value.trim();
   const conf=document.getElementById('s_confName').value.trim();
   const email=document.getElementById('s_email').value.trim();
-  key?ss(SK.apiKey,key):rs(SK.apiKey);
   conf?ss(SK.confName,conf):rs(SK.confName);
   email?ss(SK.email,email):rs(SK.email);
   const cf=document.getElementById('conferenceTag');
@@ -321,10 +313,10 @@ function saveSettings(){
 }
 function clearAllSettings(){
   if(!confirm('Clear all saved settings?'))return;
-  [SK.apiKey,SK.confName,SK.email].forEach(rs);
-  ['s_apiKey','s_confName','s_email'].forEach(id=>document.getElementById(id).value='');
+  [SK.confName,SK.email].forEach(rs);
+  ['s_confName','s_email'].forEach(id=>document.getElementById(id).value='');
   document.getElementById('conferenceTag').value='';document.getElementById('conferenceTag').classList.remove('autofilled');
-  updateKeyDot();updateGearDot();showToast('Settings cleared','');
+  updateGearDot();showToast('Settings cleared','');
 }
 function showInlineError(msg,label,fn){document.getElementById('inlineErrorMsg').textContent=msg;const btn=document.getElementById('inlineErrorAction');label?(btn.textContent=label,btn.onclick=fn,btn.style.display='inline'):(btn.style.display='none');document.getElementById('inlineError').classList.add('visible');}
 const hideInlineError=()=>document.getElementById('inlineError').classList.remove('visible');
@@ -346,7 +338,7 @@ function createRecognizer(){
 function renderTranscript(){const box=document.getElementById('transcriptBox');box.innerHTML='';if(finalTranscript){const f=document.createElement('span');f.className='final';f.textContent=finalTranscript;box.appendChild(f);}if(interimTranscript){const i=document.createElement('span');i.className='interim';i.textContent=interimTranscript;box.appendChild(i);}box.scrollTop=box.scrollHeight;}
 function startRecording(){
   if(isRecording)return;
-  if(!isValidKey()){showToast('Add your API key in Settings first','error');return;}
+  if(!isValidKey()){if(window.AppKeys)window.AppKeys.get();showToast('Add your Claude API key, then tap record again','error');return;}
   hideSpeechError();
   navigator.mediaDevices.getUserMedia({audio:true}).then(stream=>{
     stream.getTracks().forEach(t=>t.stop());
@@ -374,9 +366,9 @@ function confirmPaste(){const text=document.getElementById('pasteArea').value.tr
 async function processTranscript(){
   hideInlineError();
   if(!finalTranscript.trim()||finalTranscript.trim().length<50){showInlineError('No transcript to process \u2014 record a session first.',null,null);return;}
-  if(!isValidKey()){showInlineError('No API key found.','Open Settings \u2192',openSettings);return;}
+  const key=window.AppKeys?await window.AppKeys.get():null;
+  if(!key){showInlineError('No API key found.','Open Settings \u2192',openSettings);return;}
   if(!gs(SK.email))showToast('No default email saved \u2014 add one in Settings','');
-  const key=getKey();
   const title=document.getElementById('sessionTitle').value.trim()||'Untitled Session';
   const speaker=document.getElementById('speakerName').value.trim();
   const conf=document.getElementById('conferenceTag').value.trim();
